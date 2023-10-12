@@ -1,4 +1,7 @@
 // Find the sum of the even terms of the fibonacci sequence, up to a given ceiling.
+
+// Even entries follow two odd entries and hence occur every 3 entries. 
+
 #include<algorithm>
 using std::pair;
 
@@ -10,7 +13,7 @@ using matrix = pair<vect, vect>;
 
 struct la
 {
-  [[nodiscard]] static inline vect& Update(vect& v, matrix& m)
+  [[nodiscard]] constexpr static inline vect& Update(vect& v, const matrix& m)
   {
     vect tmp;    
     tmp.first  = (m.first.first  * v.first) + (m.second.first  * v.second);
@@ -20,13 +23,13 @@ struct la
     return v;
   }
 
-  static void pretty_print(vect& v)
+  static void pretty_print(const vect& v)
   {
-    cout << "[" << v.first  << "]" << endl;
+    cout << "[" << v.first  << "]" << "\r\n";
     cout << "[" << v.second << "]" << endl;
   }
 
-  static void pp(vect& v)
+  static void pp(const vect& v)
   {
     cout << "[" << v.first << ", " << v.second << "]" << endl;
   }
@@ -36,11 +39,24 @@ struct la
 int main()
 {
   vect state { 0, 1 };
-  matrix update { {0, 1} , {1, 1} };
+  matrix const update { {0, 1} , {1, 1} };
 
-  for(int i = 0; i < 10; i++)
+  uint64_t even_sum = 0;
+
+  state = la::Update(state, update);
+  state = la::Update(state, update);
+  state = la::Update(state, update);
+  
+  // Brute force it.
+  while(state.first <= 4000000)
   {
-    la::pp(state);  
-    state = la::Update(state, update);
+    //cout << state.first << endl;
+    even_sum += state.first;
+    state = la::Update(state, update); // ->odd
+    state = la::Update(state, update); // ->odd
+    state = la::Update(state, update); // ->even
   }
+
+  cout << "Sum of even terms: " << even_sum << endl;
+  
 }

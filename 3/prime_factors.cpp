@@ -16,12 +16,9 @@ public:
   
   [[nodiscard]] static vector<uint64_t> Sieve(uint64_t value)
   {
-
-    //cout << "Calling sieve for : " << value << endl;
-    
     vector<bool> n;
-    //for(int i = 0; i <= value; i++) n.push_back(false);
-    n.reserve(value+1);
+    uint64_t const approx_sqrt = static_cast<uint64_t>(sqrt(value));
+    n.reserve(approx_sqrt);
     vector<uint64_t> pv;
     
     for(uint64_t i = 2; i <= value; i++)

@@ -37,26 +37,11 @@ public:
     return pv;
   }
 
-    
-  [[nodiscard]] static uint64_t FindLargestPrimeFactor_old(uint64_t value)
-  {
-    vector<uint64_t> primes = Sieve(value >> 1);
-    //std::reverse(primes.begin(), primes.end());
-
-    cout << primes.size() << " primes in the sieve." << endl;
-
-    for(int i : primes)
-    {
-      if(!(value % i)) return i;
-    }
-            
-    return value;
-  }
 
   [[nodiscard]] static vector<uint64_t> FindPrimeFactors(uint64_t value)
   {
     vector<bool> n;
-    n.reserve(value >> 1);
+    n.reserve(value>>1);
 
     vector<uint64_t> p;
     

@@ -6,6 +6,9 @@ using std::vector;
 #include<algorithm>
 using std::reverse;
 
+#include<cmath>
+using std::sqrt;
+
 class Prime
 {
 
@@ -40,38 +43,40 @@ public:
 
   [[nodiscard]] static vector<uint64_t> FindPrimeFactors(uint64_t value)
   {
+    uint64_t const approx_sqrt = static_cast<uint64_t>(sqrt(value));
     vector<bool> n;
-    n.reserve(value>>1);
-
+    n.reserve(approx_sqrt);
     vector<uint64_t> p;
-    
-    // Loop, testing with numbers incrementing in a sieve
-    while(value > 1)
-    {
-      for(uint64_t i = 2; i <= value; i++)
-      {
-	if(n[i]) continue;
-	if(i > (value>>1)) i = value; 
-	
-	// Mod without loss
-	uint64_t const quotient = value/i;
-	uint64_t const remainder = value - (quotient*i);
-	
-	if(!remainder)
-	{
-	  value = quotient;
-	  p.push_back(i);
-	}
-	if(1 == value) return p;
 
-	uint64_t sieve_mul = i;
-	while(sieve_mul <= (value >> 1))
-	{
-	  n[sieve_mul] = true;
-	  sieve_mul += i;
-	}	
+    for(uint64_t i = 2; i <= value; i++)
+    {
+      if(n[i]) continue;
+      if(i > (value>>1)) i = value;
+
+      // Divide by the prime.
+      uint64_t quotient = value/i;
+      uint64_t remainder = value - (quotient*i);
+
+      // If we're divisible by this prime, stash the prime and reduce the value
+      while(!remainder) 
+      {
+	value = quotient;
+	p.push_back(i);
+	
+	quotient = value/i;
+	remainder = value - (quotient*i);
       }
+
+      if(1 == value) return p;
+      
+      uint64_t sieve_mul = i;
+      while(sieve_mul <= approx_sqrt)
+      {
+	n[sieve_mul] = true;
+	sieve_mul += i;
+      }	
     }
+    
     return vector<uint64_t>{value};
   }
 

@@ -72,8 +72,9 @@ int main(int argc, char* argv[])
   optional<pair<int,int>> rv = Pal::DigitProducts(DigitCount);
   
   if(rv.has_value())
-  {
-    cout << rv.value().first << ", " << rv.value().second << endl;
+  {    
+    cout << rv.value().first << " * " << rv.value().second;
+    cout << " = " << (rv.value().first*rv.value().second) << endl;
   }
   else cout << "No palindromes found." << endl;
 

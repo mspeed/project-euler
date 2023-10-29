@@ -15,6 +15,9 @@ using std::pair;
 #include<optional>
 using std::optional;
 
+#include<map>
+using std::map;
+
 class Pal
 {
 public:
@@ -46,18 +49,23 @@ public:
     int const UpperLimit = pow(10,DigitCount)-1;
     int const LowerLimit = pow(10, DigitCount-1);
 
+    map<int, pair<int, int>> prodmap;
+
     for(int i = UpperLimit; i>=LowerLimit; i--)
     {
       for(int j = i; j >= LowerLimit; j--)
       {
-	if(IsPalindrome(i*j)) return pair<int, int>{i,j};
+	if(IsPalindrome(i*j)) prodmap[(i*j)] = pair<int, int>{i,j};
       }
     }
-    
-    return std::nullopt;
+
+    if(!prodmap.size()) return std::nullopt;
+
+    map<int, pair<int, int>>::iterator e = prodmap.end();
+    e--;
+        
+    return e->second;    
   }
-
-
 };
 
 int main(int argc, char* argv[])

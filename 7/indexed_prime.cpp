@@ -1,4 +1,3 @@
-
 #include<iostream>
 using std::endl; using std::cout;
 
@@ -8,7 +7,6 @@ using std::vector;
 #include<array>
 using std::array;
 
-
 template<int HIGHEST_TEST_VALUE>
 class cSieve
 {
@@ -16,70 +14,64 @@ public:
 
   struct sPrimeInfo
   {
-    sPrimeInfo(){ for(bool b : Sieve){ b = false; } }
-    array<bool, HIGHEST_TEST_VALUE> Sieve;
-    vector<uint64_t> Primes;
+    array<bool, HIGHEST_TEST_VALUE> Sieve = {false};
+    vector<uint64_t> Primes;    
   };
 
-  [[nodiscard]] static sPrimeInfo& GetNthPrime(int N, sPrimeInfo& P)
+  void static pp(sPrimeInfo const& P) 
   {
-    if(N >= HIGHEST_TEST_VALUE) return P;
-    // N'th prime is not divisible by the N-1 primes that precede it.
-    if(!N){ P.Primes.push_back(1); P.Sieve[0] = true; return P; }
-    // Do we really want 10k stack frames? Probably not.
+    cout << "Sieve: ";
+    for(bool b : P.Sieve) cout << b << ", ";
+    cout << endl << "Primes: ";
+    for(uint64_t p : P.Primes) cout << p << ", ";
+    cout << endl;
+  }
 
+  [[nodiscard]] static sPrimeInfo& GetNthPrime(int N, sPrimeInfo& P)
+  {    
+    if(!N){ P.Primes.push_back(1); P.Sieve[0] = true; return P; }
+
+    // Do we really want 10k stack frames? Probably not.
     // Find the Nth prime using the sieve in P.
     P = GetNthPrime(N-1, P);      
-    
-    uint64_t const LastPrime = P.Primes[P.Primes.size()-1];
 
-    cout << "LastPrime: " << LastPrime << endl;
-    
-    uint64_t PrimeTest = LastPrime + 1;
+    uint64_t PrimeTest = P.Primes[P.Primes.size()-1] + 1;
     while(P.Sieve[PrimeTest])
     {
-      cout << "P.Sieve[" << PrimeTest << " = " << P.Sieve[PrimeTest] << endl;
-      PrimeTest++;      
+      PrimeTest++;
+      if(PrimeTest >= HIGHEST_TEST_VALUE)
+      {
+	cout << "Primes exceeded sieve length. " << endl;
+	exit(-1);
+      }
     }
 
-    cout << "PrimeTest leads to: " << PrimeTest << endl;
-
+    // Save this prime.  
     P.Primes.push_back(PrimeTest);
-    P.Sieve[PrimeTest] = true;
     
     uint64_t ClearIndex = PrimeTest;
-    
     while(ClearIndex < HIGHEST_TEST_VALUE)
     {
-      cout << "Setting sieve[" << ClearIndex << "] to true." << endl;
       P.Sieve[ClearIndex] = true;
       ClearIndex += PrimeTest;
     }
     
     return P;
   };
-  
-  
-
 
 };
 
 
-int main()
+#define SIEVE_SIZE 150000
+
+int main(int argc, char* argv[])
 {
-
+  if(2!=argc){ cout << argv[0] << " <prime index>" << endl; return -1; }    
+  int const PrimeIndex = atoi(argv[1]);
   
-  cSieve<20>::sPrimeInfo mPI;
-  
+  cSieve<SIEVE_SIZE>::sPrimeInfo mPI;
+  mPI = cSieve<SIEVE_SIZE>::GetNthPrime(PrimeIndex, mPI);
 
-  mPI = cSieve<20>::GetNthPrime(5, mPI);
-
-
-  for(uint64_t i : mPI.Primes) cout << i << ", " << endl;
-
-  cout << "Found: " << mPI.Primes.size() << " primes." << endl;
-  //cout << "Last prime: " << *(mPI.Primes.end()--) << endl;
-  
-
+  cout << "Prime " << PrimeIndex << "= " << mPI.Primes[mPI.Primes.size()-1] << endl;
 
 }
